@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalara.AvaTax.RestClient;
 using Headstart.Common;
 using Headstart.Common.Constants;
 using Headstart.Common.Extensions;
@@ -288,9 +287,8 @@ namespace Headstart.API.Commands
                 return new HSOrderCalculateResponse();
             } else
             {
-                //Faking the tax because I don't have an Avalara account
-                //var totalTax = await _avalara.GetEstimateAsync(orderCalculatePayload.OrderWorksheet.Reserialize<OrderWorksheet>());
-                var totalTax = new TransactionModel();
+                var totalTax = await _avalara.GetEstimateAsync(orderCalculatePayload.OrderWorksheet.Reserialize<OrderWorksheet>());
+
                 return new HSOrderCalculateResponse
                 {
                     TaxTotal = totalTax.totalTax ?? 0,

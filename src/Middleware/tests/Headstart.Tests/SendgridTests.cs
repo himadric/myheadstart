@@ -49,7 +49,7 @@ namespace Headstart.Tests
         public class TestConstants
         {
             public const string orderID = "testorder";
-            public const string buyerEmail = "hchakrabarti@nishtecinc.com";
+            public const string buyerEmail = "buyer@test.com";
             public const string lineItem1ID = "testlineitem1";
             public const string lineItem2ID = "testlineitem2";
             public const decimal lineItem1Total = 15;

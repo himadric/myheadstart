@@ -70,7 +70,7 @@ namespace ordercloud.integrations.avalara
                 Code = hsListArgs.Filters[0].FilterValues[0].Term, 
                 Description = hsListArgs.Filters[0].FilterValues[0].Term };
             var codeList = new ListPage<TaxCode> {Items = new List<TaxCode> {taxCode}};
-            return codeList;
+			return codeList;
 		}
 
 		public async Task<TaxCertificate> GetCertificateAsync(int certificateID)

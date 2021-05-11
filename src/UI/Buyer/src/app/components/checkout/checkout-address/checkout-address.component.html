@@ -76,7 +76,7 @@
     <button
       type="submit"
       *ngIf="!showNewAddressForm"
-      [disabled]="!selectedShippingAddress || (!selectedBuyerLocation && !isAnon)"
+      [disabled]="!selectedShippingAddress"
       (click)="saveAddressesAndContinue()"
       class="btn btn-secondary btn-sm mr-2 mt-3"
       translate
