@@ -25,8 +25,6 @@
     [readonly]="readonly"
     [currency]="supplierCurrency"
     [priceSchedule]="supplierPriceSchedule"
-    [variantCount]="superProduct?.Variants?.length"
-    [specCount]="superProduct?.Specs?.length"
     (priceScheduleUpdated)="updateSupplierPriceSchedule($event)"
   >
   </price-break-editor>
@@ -116,8 +114,6 @@
           [readonly]="true"
           [currency]="sellerCurrency"
           [priceSchedule]="buyerMarkedUpSupplierPrices"
-          [variantCount]="superProduct?.Variants?.length"
-          [specCount]="superProduct?.Specs?.length"
         >
         </price-break-editor>
       </ng-container>
@@ -128,8 +124,6 @@
           [currency]="sellerCurrency"
           [priceSchedule]="overridePriceScheduleEditable"
           (priceScheduleUpdated)="updateOverridePriceSchedule($event)"
-          [variantCount]="superProduct?.Variants?.length"
-          [specCount]="superProduct?.Specs?.length"
         >
         </price-break-editor>
       </ng-container>

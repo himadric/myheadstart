@@ -17,9 +17,7 @@ import {
   HeadStartSDK,
   OrderCloudIntegrationsCreditCardToken,
 } from '@ordercloud/headstart-sdk'
-import {
-  getOrderSummaryMeta,
-} from 'src/app/services/purchase-order.helper'
+import { getOrderSummaryMeta } from 'src/app/services/purchase-order.helper'
 import { NgxSpinnerService } from 'ngx-spinner'
 import { ToastrService } from 'ngx-toastr'
 import {
@@ -31,14 +29,15 @@ import { AxiosError } from 'axios'
 import { CheckoutService } from 'src/app/services/order/checkout.service'
 import { ShopperContextService } from 'src/app/services/shopper-context/shopper-context.service'
 import { CheckoutSection } from 'src/app/models/checkout.types'
-import { HSBuyerCreditCard, SelectedCreditCard } from 'src/app/models/credit-card.types'
+import {
+  HSBuyerCreditCard,
+  SelectedCreditCard,
+} from 'src/app/models/credit-card.types'
 import { OrderSummaryMeta } from 'src/app/models/order.types'
 import { ModalState } from 'src/app/models/shared.types'
 import { ErrorDisplayData, MiddlewareError } from 'src/app/models/error.types'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-
-
 
 @Component({
   templateUrl: './checkout.component.html',
@@ -96,7 +95,7 @@ export class OCMCheckout implements OnInit {
     private toastrService: ToastrService,
     private router: Router,
     private translate: TranslateService
-  ) {}
+  ) { }
 
   async ngOnInit(): Promise<void> {
     this.context.order.onChange((order) => (this.order = order))
@@ -109,16 +108,9 @@ export class OCMCheckout implements OnInit {
     this.orderPromotions = this.context.order.promos.get().Items
     this.isAnon = this.context.currentUser.isAnonymous()
     this.currentPanel = this.isAnon ? 'login' : 'shippingAddressLoading'
-    this.initLoadingIndicator();
-    this.orderSummaryMeta = getOrderSummaryMeta(
-      this.order,
-      this.orderPromotions,
-      this.lineItems.Items,
-      this.shipEstimates,
-      this.currentPanel
-    )
+    this.initLoadingIndicator()
+    this.updateOrderMeta()
     this.setValidation('login', !this.isAnon)
-
     this.isNewCard = false
     this.invalidLineItems = await this.context.order.cart.getInvalidLineItems()
     if (this.invalidLineItems?.length) {
@@ -164,21 +156,17 @@ export class OCMCheckout implements OnInit {
     this.toSection('shippingAddress')
   }
 
-  async handleSavedCard(card: HSBuyerCreditCard): Promise<Payment> {
-    // amount gets calculated in middleware
-    await this.context.order.checkout.setOneTimeAddress(card.xp.CCBillingAddress, 'billing')
-    return this.buildCCPaymentFromSavedCard(card);
-  }
-
   buildCCPaymentFromNewCard(card: OrderCloudIntegrationsCreditCardToken): Payment {
     return {
       DateCreated: new Date().toDateString(),
       Accepted: false,
       Type: 'CreditCard',
       xp: {
-        partialAccountNumber: card.AccountNumber.substr(card.AccountNumber.length - 4),
+        partialAccountNumber: card.AccountNumber.substr(
+          card.AccountNumber.length - 4
+        ),
         cardType: card.CardType,
-      }
+      },
     }
   }
 
@@ -211,7 +199,7 @@ export class OCMCheckout implements OnInit {
     if (!output.SavedCard) {
       payments.push(await this.handleNewCard(output))
     } else {
-      payments.push(await this.handleSavedCard(output.SavedCard))
+      payments.push(this.buildCCPaymentFromSavedCard(output.SavedCard))
       delete this.selectedCard.NewCard
     }
     if (this.orderSummaryMeta.POLineItemCount) {
@@ -231,8 +219,8 @@ export class OCMCheckout implements OnInit {
 
   async handleNewCard(output: SelectedCreditCard): Promise<HSPayment> {
     this.isNewCard = true
-    await this.context.order.checkout.setOneTimeAddress(output.NewCard.CCBillingAddress, 'billing')
-    if(this.isAnon) {
+    if (this.isAnon) {
+      await this.context.order.checkout.setOneTimeAddress(output.NewCard.CCBillingAddress, 'billing')
       return this.buildCCPaymentFromNewCard(output.NewCard)
     } else {
       this.selectedCard.SavedCard = await this.context.currentUser.cards.Save(
@@ -262,6 +250,7 @@ export class OCMCheckout implements OnInit {
       void this.router.navigate(['/cart'])
     } else {
       this.initLoadingIndicator('submitLoading')
+      await this.checkout.checkForSellerOwnedProducts(this.lineItems.Items)
       await this.checkout.addComment(comment)
       try {
         const payment = this.orderSummaryMeta.StandardLineItemCount
@@ -293,12 +282,14 @@ export class OCMCheckout implements OnInit {
       this.handleOrderCloudValidationError(this.checkoutError)
     } else if (!this.checkoutError || !this.checkoutError.ErrorCode) {
       throw new Error(this.translate.instant('ERRORS.UNKNOWN'))
-    } else if (this.checkoutError.ErrorCode === ErrorCodes.InternalServerError.code) {
+    } else if (
+      this.checkoutError.ErrorCode === ErrorCodes.InternalServerError.code
+    ) {
       throw new Error(this.checkoutError.Message)
     } else if (this.checkoutError.ErrorCode?.includes('CreditCardAuth.')) {
       await this.handleCreditcardError(this.checkoutError)
     } else {
-      const matchingError = this.getMatchingError(this.checkoutError);
+      const matchingError = this.getMatchingError(this.checkoutError)
       if (matchingError) {
         this.handleOrderError(matchingError)
       } else {
@@ -308,8 +299,8 @@ export class OCMCheckout implements OnInit {
   }
 
   getMatchingError(error: MiddlewareError): ErrorDisplayData {
-    const matchingError = Object.keys(ErrorCodes).find(key => {
-      return (ErrorCodes[key].code === error.ErrorCode)
+    const matchingError = Object.keys(ErrorCodes).find((key) => {
+      return ErrorCodes[key].code === error.ErrorCode
     })
     if (matchingError) {
       return ErrorCodes[matchingError]
@@ -319,16 +310,17 @@ export class OCMCheckout implements OnInit {
   handleOrderError(error: ErrorDisplayData, customMessage?: string): void {
     this.orderErrorTitle = this.translate.instant(error.title)
     // custom message would already be translated
-    this.orderErrorMessage = customMessage ? customMessage : this.translate.instant(error.message)
+    this.orderErrorMessage = customMessage
+      ? customMessage
+      : this.translate.instant(error.message)
     this.orderErrorButtonText = this.translate.instant(error.buttonText)
     this.orderErrorModal = ModalState.Open
   }
 
-
   handleOrderCloudValidationError(error: MiddlewareError): void {
     // TODO: blow this out into a modal that allows user to easily take action on line items in cart
     const innerErrors = error.Data as MiddlewareError[]
-    const inventoryError = innerErrors.find(e => isInventoryError(e))
+    const inventoryError = innerErrors.find((e) => isInventoryError(e))
     if (inventoryError) {
       const part1 = this.translate.instant('ERRORS.INSUFFICIENT.MESSAGE_PART1')
       const part2 = this.translate.instant('ERRORS.INSUFFICIENT.MESSAGE_PART2')
@@ -341,8 +333,12 @@ export class OCMCheckout implements OnInit {
 
   getPaymentError(errorReason: string): string {
     const reason = errorReason.replace('AVS', 'Address Verification') // AVS isn't likely something to be understood by a layperson
-    const part1 = this.translate.instant('ERRORS.CREDIT_CARD_AUTH.MESSAGE_PART1')
-    const part2 = this.translate.instant('ERRORS.CREDIT_CARD_AUTH.MESSAGE_PART2')
+    const part1 = this.translate.instant(
+      'ERRORS.CREDIT_CARD_AUTH.MESSAGE_PART1'
+    )
+    const part2 = this.translate.instant(
+      'ERRORS.CREDIT_CARD_AUTH.MESSAGE_PART2'
+    )
     return `${part1} "${reason}". ${part2}`
   }
 
@@ -357,22 +353,32 @@ export class OCMCheckout implements OnInit {
     }
   }
 
-  handleCheckoutError(): void {
+  async handleCheckoutError(): Promise<void> {
     this.orderErrorModal = ModalState.Closed
-    if (this.checkoutError.ErrorCode === ErrorCodes.MissingShippingSelections.code) {
+    await this.refreshOrderUpdateMeta()
+    if (
+      this.checkoutError.ErrorCode === ErrorCodes.MissingShippingSelections.code
+    ) {
       this.currentPanel = 'shippingAddress'
-    } else if (this.checkoutError.ErrorCode === ErrorCodes.AlreadySubmitted.code) {
+    } else if (
+      this.checkoutError.ErrorCode === ErrorCodes.AlreadySubmitted.code
+    ) {
       this.router.navigateByUrl('/home')
-    } else if (this.checkoutError.ErrorCode === ErrorCodes.FailedToVoidAuthorization.code ||
-      this.checkoutError.ErrorCode?.includes('CreditCardAuth.')) {
+    } else if (
+      this.checkoutError.ErrorCode ===
+        ErrorCodes.FailedToVoidAuthorization.code ||
+      this.checkoutError.ErrorCode?.includes('CreditCardAuth.')
+    ) {
       this.currentPanel = 'payment'
-    } else if (this.checkoutError.ErrorCode === ErrorCodes.OrderCloudValidationError.code) {
+    } else if (
+      this.checkoutError.ErrorCode === ErrorCodes.OrderCloudValidationError.code
+    ) {
       this.router.navigateByUrl('/cart')
     }
-    this.checkoutError = null;
-    this.orderErrorTitle = null;
-    this.orderErrorMessage = null;
-    this.orderErrorButtonText = null;
+    this.checkoutError = null
+    this.orderErrorTitle = null
+    this.orderErrorMessage = null
+    this.orderErrorButtonText = null
   }
 
   getCCPaymentData(): OrderCloudIntegrationsCreditCardPayment {
@@ -396,19 +402,14 @@ export class OCMCheckout implements OnInit {
 
   toSection(id: string): void {
     this.orderPromotions = this.context.order.promos.get()?.Items
-    this.orderSummaryMeta = getOrderSummaryMeta(
-      this.order,
-      this.orderPromotions,
-      this.lineItems.Items,
-      this.shipEstimates,
-      id
-    )
+    this.updateOrderMeta(id)
     const prevIdx = Math.max(this.sections.findIndex((x) => x.id === id) - 1, 0)
-
     // set validation to true on all previous sections
     for (let i = 0; i <= prevIdx; i++) {
       const prev = this.sections[i].id
-      this.setValidation(prev, true)
+      if (prev !== id) {
+        this.setValidation(prev, true)
+      }
     }
     this.accordian?.toggle(id)
   }
@@ -431,21 +432,26 @@ export class OCMCheckout implements OnInit {
     this.currentPanel = $event.panelId
   }
 
-  updateOrderMeta(promos?: CustomEvent<OrderPromotion[]>): void {
-    this.orderPromotions = this.context.order.promos.get().Items
-    this.orderPromotions = promos.detail
+  async refreshOrderUpdateMeta(): Promise<void> {
+    await this.context.order.reset()
+    this.lineItems = this.context.order.cart.get()
+    this.orderPromotions = this.context.order.promos.get()?.Items
+    this.updateOrderMeta()
+  }
+
+  updateOrderMeta(panelID?: string): void {
     this.orderSummaryMeta = getOrderSummaryMeta(
       this.order,
       this.orderPromotions,
       this.lineItems.Items,
       this.shipEstimates,
-      this.currentPanel
+      panelID || this.currentPanel
     )
   }
 
   initLoadingIndicator(toSection?: string): void {
     this.isLoading = true
-    if(toSection) {
+    if (toSection) {
       this.currentPanel = toSection
     }
     this.spinner.show()

@@ -50,7 +50,7 @@ jobs:
           publishWebProjects: false
           projects: "**/Headstart.API.csproj"
           arguments: --configuration Release --output middleware
-          zipAfterPublish: false
+          zipAfterPublish: true
       - task: PublishBuildArtifacts@1
         displayName: "Publish Artifact: Middleware"
         inputs:

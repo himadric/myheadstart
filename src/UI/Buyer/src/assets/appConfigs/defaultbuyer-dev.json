@@ -1,0 +1,16 @@
+{
+  "hostedApp": true,
+  "appname": "HeadstartDemo",
+  "appID": "headstartdemo-dev",
+  "clientID": "FEF98057-7ED2-47A7-82FE-6C9C0EF67EDE",
+  "incrementorPrefix": "HS_TEST",
+  "baseUrl": "https://himadri-headstart-buyer-dev.azurewebsites.net/",
+  "middlewareUrl": "https://himadri-headstart-middleware-dev.azurewebsites.net",
+  "cmsUrl": "https://ordercloud-cms-test.azurewebsites.net",
+  "creditCardIframeUrl": "https://fts-uat.cardconnect.com/itoke/ajax-tokenizer.html",
+  "translateBlobUrl": "https://ordercloud.blob.core.windows.net/ngx-translate/i18n/",
+  "sellerID": "qGlX95wU8TwtyI93",
+  "orderCloudApiUrl": "https://sandboxapi.ordercloud.io",
+  "theme": { "logoSrc": "assets/generic-logo.png" },
+  "instrumentationKey": "652b5d97-5fbb-42ed-a5fc-ca2fd5ea3e5a"
+}

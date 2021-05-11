@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
 import { ShopperContextService } from '../services/shopper-context/shopper-context.service'
 import { takeWhile } from 'rxjs/operators'
 import { ListPage } from 'ordercloud-javascript-sdk'
-import { isEmpty as _isEmpty, uniq as _uniq } from 'lodash'
+import { uniq as _uniq } from 'lodash'
 import { SupplierFilterService } from '../services/supplier-filter/supplier-filter.service'
 import { HSMeProduct } from '@ordercloud/headstart-sdk'
 import { ShipFromSourcesDic } from '../models/shipping.types'
@@ -26,14 +25,10 @@ export class ProductListWrapperComponent implements OnInit, OnDestroy {
 
   constructor(
     public context: ShopperContextService,
-    private supplierFilterService: SupplierFilterService,
-    private activatedRoute: ActivatedRoute
+    private supplierFilterService: SupplierFilterService
   ) {}
 
   ngOnInit(): void {
-    if (_isEmpty(this.activatedRoute.snapshot.queryParams)) {
-      this.context.categories.setActiveCategoryID(null)
-    }
     this.context.productFilters.activeFiltersSubject
       .pipe(takeWhile(() => this.alive))
       .subscribe(this.handleFiltersChange)

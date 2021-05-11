@@ -12,6 +12,8 @@ export const ocAppConfig: AppConfig = {
   orderCloudApiUrl: environment.orderCloudApiUrl,
   translateBlobUrl: environment.translateBlobUrl,
   blobStorageUrl: environment.blobStorageUrl,
+  buyerConfigs: environment.buyerConfigs,
+  superProductFieldsToMonitor: environment.superProductFieldsToMonitor,
   // sellerName is being hard-coded until this is available to store in OrderCloud
   sellerName: environment.sellerName,
   scope: [

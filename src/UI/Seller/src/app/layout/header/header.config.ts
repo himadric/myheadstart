@@ -48,7 +48,7 @@ const ProductNavGrouping: HSRoute = {
     HSRoles.HSProductReader,
     HSRoles.HSMeProductAdmin,
   ],
-  title: 'ADMIN.NAV.PRODUCTS',
+  title: 'PRODUCTS',
   route: '/products',
   subRoutes: [AllProducts, Promotions, ProductFacets],
 }
@@ -208,25 +208,24 @@ const SupplierNavGrouping: HSRoute = {
   subRoutes: [AllSuppliers, SupplierUsers, SupplierLocations],
 }
 
-/** https://four51.atlassian.net/browse/HDS-319 Reimplement once feature is stable */
-// const ProcessReports = {
-//   rolesWithAccess: [HSRoles.HSReportReader],
-//   title: 'ADMIN.NAV.PROCESS_REPORTS',
-//   route: 'reports/reports',
-// }
+const ProcessReports = {
+  rolesWithAccess: [HSRoles.HSReportReader],
+  title: 'ADMIN.NAV.PROCESS_REPORTS',
+  route: 'reports/reports',
+}
 
-// const ReportTemplates = {
-//   rolesWithAccess: [HSRoles.HSReportAdmin],
-//   title: 'ADMIN.NAV.REPORT_TEMPLATES',
-//   route: `reports/${REDIRECT_TO_FIRST_PARENT}/templates`,
-// }
+const ReportTemplates = {
+  rolesWithAccess: [HSRoles.HSReportAdmin],
+  title: 'ADMIN.NAV.REPORT_TEMPLATES',
+  route: `reports/${REDIRECT_TO_FIRST_PARENT}/templates`,
+}
 
-// const ReportsNavGrouping = {
-//   rolesWithAccess: [HSRoles.HSReportAdmin, HSRoles.HSReportReader],
-//   title: 'ADMIN.NAV.REPORTS',
-//   route: '/reports',
-//   subRoutes: [ProcessReports, ReportTemplates],
-// }
+const ReportsNavGrouping = {
+  rolesWithAccess: [HSRoles.HSReportAdmin, HSRoles.HSReportReader],
+  title: 'ADMIN.NAV.REPORTS',
+  route: '/reports',
+  subRoutes: [ProcessReports, ReportTemplates],
+}
 
 //Seller Admin
 const SellerUsers = {
@@ -298,7 +297,7 @@ const AllNavGroupings: HSRoute[] = [
   SellerOrderNavGrouping,
   BuyerNavGrouping,
   SupplierNavGrouping,
-  // ReportsNavGrouping,
+  ReportsNavGrouping,
   SellerNavGrouping,
   StorefrontNavGrouping,
   MySupplierProfile,

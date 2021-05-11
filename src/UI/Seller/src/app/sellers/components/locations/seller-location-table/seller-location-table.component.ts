@@ -30,7 +30,7 @@ export class SellerLocationTableComponent extends ResourceCrudComponent<Address>
     )
   }
 
-  handleSellerAddressSelect(address): void {
+  handleSellerAddressSelect(address) {
     this.updatedResource = address
   }
 

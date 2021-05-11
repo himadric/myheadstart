@@ -63,10 +63,14 @@ namespace ordercloud.integrations.avalara
 
 		public async Task<ListPage<TaxCode>> ListTaxCodesAsync(ListArgs<TaxCode> hsListArgs)
 		{
-			var args = TaxCodeMapper.Map(hsListArgs);
-			var avataxCodes = await _avaTax.ListTaxCodesAsync(args.Filter, args.Top, args.Skip, args.OrderBy);
-			var codeList = TaxCodeMapper.Map(avataxCodes, args);
-			return codeList;
+			//var args = TaxCodeMapper.Map(hsListArgs);
+			//var avataxCodes = await _avaTax.ListTaxCodesAsync(args.Filter, args.Top, args.Skip, args.OrderBy);
+			//var codeList = TaxCodeMapper.Map(avataxCodes, args);
+            var taxCode = new TaxCode {Category = hsListArgs.Filters[0].FilterValues[0].Term, 
+                Code = hsListArgs.Filters[0].FilterValues[0].Term, 
+                Description = hsListArgs.Filters[0].FilterValues[0].Term };
+            var codeList = new ListPage<TaxCode> {Items = new List<TaxCode> {taxCode}};
+            return codeList;
 		}
 
 		public async Task<TaxCertificate> GetCertificateAsync(int certificateID)

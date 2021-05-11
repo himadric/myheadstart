@@ -1,12 +1,19 @@
 {
   "hostedApp": true,
-  "sellerID": "my-seller-id",
-  "sellerName": "Default Admin",
-  "appname": "Default Admin",
-  "clientID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-  "middlewareUrl": "https://my-default-admin-test.com",
+  "sellerID": "ceSUZ4FIpjXaj1Ym",
+  "sellerName": "Nish Tech",
+  "appname": "Nish Tech Admin",
+  "clientID": "21EE5AD4-7204-46F8-8DA1-B35B72FAFA53",
+  "middlewareUrl": "https://demo-headstart-middleware-test.azurewebsites.net",
   "cmsUrl": "https://ordercloud-cms-test.azurewebsites.net",
-  "translateBlobUrl": "https://my-translation-files/ngx-translate/i18n/",
-  "blobStorageUrl": "https://myblobstoragecontainer.blob.core.windows.net",
-  "orderCloudApiUrl": "https://sandboxapi.ordercloud.io"
+  "translateBlobUrl": "https://demoheadstartstorage.blob.core.windows.net/ngx-translate/i18n/",
+  "blobStorageUrl": "https://ordercloud.blob.core.windows.net/",
+  "orderCloudApiUrl": "https://sandboxapi.ordercloud.io",
+  "buyerConfigs": {
+    "Default Buyer": {
+      "clientID": "1DFFE69B-83B8-439C-8A9A-5AA9006B202F",
+      "buyerUrl": "https://demo-headstart-buyer-test.azurewebsites.net/"
+    }
+  },
+  "superProductFieldsToMonitor": []
 }
